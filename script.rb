@@ -1,25 +1,21 @@
 module Enumerable
 
   def my_each
-    type = self.class
-    if type == Array || type == Range
-      for item in self
-        yield item
-      end
-    elsif type == Hash
-      keys = self.keys
-      for key in keys
-        value = self[key]
-        yield(value)
-        yield(key)
-      end
+    i = 0
+    arr = self.to_a
+    while i < self.size
+      yield arr[i]
+      i += 1
     end
-    return self
+    self
   end
 
   def my_each_with_index
-    for i in (0...self.size) do
-      yield(self[i], i)
+    i = 0
+    arr = self.to_a
+    while i < self.size
+      yield arr[i], i
+      i += 1
     end
     self
   end
@@ -35,60 +31,60 @@ module Enumerable
     arr
   end
 
-def my_all?
-  arr = self.to_a
-  false_counter = 0
-  i = 0
-  while i < self.size
-    break if false_counter > 0
-    if block_given?
-        if yield(arr[i]) == false
+  def my_all?
+    arr = self.to_a
+    false_counter = 0
+    i = 0
+    while i < self.size
+      break if false_counter > 0
+      if block_given?
+          if yield(arr[i]) == false
+            false_counter += 1
+          end
+      elsif arr[i].nil? or arr[i] == false
           false_counter += 1
-        end
-    elsif arr[i].nil? or arr[i] == false
-        false_counter += 1
+      end
+      i += 1
     end
-    i += 1
-  end
-  false_counter == 0 ? true : false
+    false_counter == 0 ? true : false
   end 
 
-def my_any?
-  arr = self.to_a
-  true_counter = 0
-  i = 0
-  while i < self.size
-    break if true_counter > 0
-    if block_given?
-      if yield(arr[i]) == true
+  def my_any?
+    arr = self.to_a
+    true_counter = 0
+    i = 0
+    while i < self.size
+      break if true_counter > 0
+      if block_given?
+        if yield(arr[i]) == true
+          true_counter += 1
+        end
+      elsif arr[i] != nil and arr[i] != false
         true_counter += 1
       end
-    elsif arr[i] != nil and arr[i] != false
-      true_counter += 1
+      i += 1
     end
-    i += 1
+    true_counter == 0 ? false : true
   end
-  true_counter == 0 ? false : true
-end
 
 
-def my_none?
-        arr = self.to_a
-        true_counter = 0
-        i = 0
-        while i < self.size
-            break if true_counter > 0
-            if block_given?
-                if yield(arr[i]) == true
-                    true_counter += 1
-                end
-            elsif arr[i] != nil and arr[i] != false
-                true_counter += 1
-            end
-            i += 1
+  def my_none?
+    arr = self.to_a
+    true_counter = 0
+    i = 0
+    while i < self.size
+      break if true_counter > 0
+      if block_given?
+        if yield(arr[i]) == true
+          true_counter += 1
         end
-        true_counter == 0 ? true : false
-    end 
+      elsif arr[i] != nil and arr[i] != false
+        true_counter += 1
+      end
+      i += 1
+    end
+    true_counter == 0 ? true : false
+  end 
 
   def my_count(target=nil)
     if !block_given? && target.nil?
@@ -156,9 +152,9 @@ multiply_els ([2,4,5])
   # puts array.my_map {|x| x*2}
   
 
-  # h = { "a" => 100, "b" => 200, "c" => 80 }
-  # h.my_each {|i| puts i}
-  # h.my_each_with_index {|i,j| puts i.to_s + " " + j.to_s}
+  h = { "a" => 100, "b" => 200, "c" => 80 }
+  # h.each {|k,v| puts v}
+  h.my_each_with_index {|i,j| puts i.to_s + " " + j.to_s}
   # h.my_select {|k,v| k > "a"}
   # puts h.my_count
   # puts h.my_all? {|k, v| v < 10}
